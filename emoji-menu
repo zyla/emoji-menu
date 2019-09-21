@@ -2,6 +2,11 @@
 
 cd $(dirname $(readlink -f $0))
 
-emoji=$(jq -r .[].name emojione.json | dmenu)
-codepoint=$(jq -r ".[] | select(.name == \"$emoji\") | .code_points.base" emojione.json)
-xdotool type "$(printf "\\U$codepoint")"
+emoji=$(
+    jq -r '.[] | .name, .code_points.base' emojione.json |\
+    while read name && read codepoint; do
+        printf "\\U$codepoint $name\n"
+    done |\
+    dmenu |\
+    awk '{print $1}')
+xdotool type "$emoji"
