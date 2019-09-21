@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $(readlink -f $0))
+
 emoji=$(jq -r .[].name emojione.json | dmenu)
 codepoint=$(jq -r ".[] | select(.name == \"$emoji\") | .code_points.base" emojione.json)
 xdotool type "$(printf "\\U$codepoint")"
